@@ -3,26 +3,31 @@
 {% block content %}
     <h2>Tinggalkan Pesan</h2>
     <form method="post">
-        <p>Nama: <br><input type="text" name="nama" size="30"></p>
-        <p>Pesan: <br><textarea name="pesan" rows="5" cols="30"></textarea></p>
-        <p><button type="submit">Kirim Pesan</button></p>
+        <div class="mb-3">
+            <label for="nama" class="form-label">Nama:</label>
+            <input type="text" name="nama" class="form-control" id="nama">
+        </div>
+        <div class="mb-3">
+            <label for="pesan" class="form-label">Pesan:</label>
+            <textarea name="pesan" rows="3" class="form-control" id="pesan"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Kirim Pesan</button>
     </form>
 
     <hr>
     <h2>Pesan yang Masuk</h2>
     {% for p in semua_pesan %}
-    <div class="pesan">
-        <p><strong>{{ p.nama }}:</strong></p>
-        <p>{{ p.pesan }}</p>
-        <small>
-            <a href="{{ url_for('edit', id=p.id) }}">Edit</a>
-            
-            <form action="{{ url_for('hapus', id=p.id) }}" method="post" style="display:inline; margin-left: 10px;">
-                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus pesan ini?');">Hapus</button>
-            </form>
-        </small>
-    </div>
-{% else %}
-    <p>Belum ada pesan. Jadilah yang pertama!</p>
-{% endfor %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ p.nama }}</h5>
+                <p class="card-text">{{ p.pesan }}</p>
+                <a href="{{ url_for('edit', id=p.id) }}" class="btn btn-secondary btn-sm">Edit</a>
+                <form action="{{ url_for('hapus', id=p.id) }}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin?');">Hapus</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info">Belum ada pesan. Jadilah yang pertama!</div>
+    {% endfor %}
 {% endblock %}

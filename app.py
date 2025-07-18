@@ -1,8 +1,9 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY'] = 'ini-adalah-kunci-rahasia-yang-sulit-ditebak'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///buku_tamu.db'
 db = SQLAlchemy(app)
 
@@ -28,10 +29,11 @@ def index():
     try:
       db.session.add(pesan_baru)
       db.session.commit()
+      flash('Pesan berhasil disimpan!', 'success')
       return redirect(url_for('index'))
     except:
       db.session.rollback()
-      return "Terjadi kesalahan saat menyimpan pesan.", 500
+      return "Terjadi kesalahan saat menyimpan pesan."
   else:
     semua_pesan = Pesan.query.order_by(Pesan.id.desc()).all()
     return render_template('index.html', semua_pesan=semua_pesan)
@@ -43,6 +45,7 @@ def hapus(id):
   try:
     db.session.delete(pesan)
     db.session.commit()
+    flash('Pesan berhasil dihapus!', 'success')
     return redirect(url_for('index'))
   except:
     db.session.rollback()
@@ -58,10 +61,11 @@ def edit(id):
     
     try:
       db.session.commit()
+      flash('Pesan berhasil diedit!', 'success')
       return redirect(url_for('index'))
     except:
       db.session.rollback()
-      return "Terjadi kesalahan saat mengedit pesan.", 500
+      return "Terjadi kesalahan saat mengedit pesan."
   else:
     return render_template('edit.html', pesan=pesan)
 
