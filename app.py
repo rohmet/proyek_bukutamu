@@ -36,5 +36,34 @@ def index():
     semua_pesan = Pesan.query.order_by(Pesan.id.desc()).all()
     return render_template('index.html', semua_pesan=semua_pesan)
 
+# Route untuk menghapus pesan
+@app.route('/hapus/<int:id>', methods=['POST'])
+def hapus(id):
+  pesan = Pesan.query.get_or_404(id)
+  try:
+    db.session.delete(pesan)
+    db.session.commit()
+    return redirect(url_for('index'))
+  except:
+    db.session.rollback()
+    return "Terjadi kesalahan saat menghapus pesan."
+
+# Route untuk mengedit pesan
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit(id):
+  pesan = Pesan.query.get_or_404(id)
+  if request.method == 'POST':
+    pesan.nama = request.form['nama']
+    pesan.pesan = request.form['pesan']
+    
+    try:
+      db.session.commit()
+      return redirect(url_for('index'))
+    except:
+      db.session.rollback()
+      return "Terjadi kesalahan saat mengedit pesan.", 500
+  else:
+    return render_template('edit.html', pesan=pesan)
+
 if __name__ == '__main__':
   app.run(debug=True)

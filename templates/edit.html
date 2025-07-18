@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Edit Pesan</h2>
+    <form method="post">
+        <p>Nama: <br><input type="text" name="nama" size="30" value="{{ pesan.nama }}"></p>
+        <p>Pesan: <br><textarea name="pesan" rows="5" cols="30">{{ pesan.pesan }}</textarea></p>
+        <p>
+            <button type="submit">Simpan Perubahan</button>
+            <a href="{{ url_for('index') }}">Batal</a>
+        </p>
+    </form>
+{% endblock %}

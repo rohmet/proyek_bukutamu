@@ -11,11 +11,18 @@
     <hr>
     <h2>Pesan yang Masuk</h2>
     {% for p in semua_pesan %}
-        <div class="pesan">
-            <p><strong>{{ p.nama }}:</strong></p>
-            <p>{{ p.pesan }}</p>
-        </div>
-    {% else %}
-        <p>Belum ada pesan. Jadilah yang pertama!</p>
-    {% endfor %}
+    <div class="pesan">
+        <p><strong>{{ p.nama }}:</strong></p>
+        <p>{{ p.pesan }}</p>
+        <small>
+            <a href="{{ url_for('edit', id=p.id) }}">Edit</a>
+            
+            <form action="{{ url_for('hapus', id=p.id) }}" method="post" style="display:inline; margin-left: 10px;">
+                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin menghapus pesan ini?');">Hapus</button>
+            </form>
+        </small>
+    </div>
+{% else %}
+    <p>Belum ada pesan. Jadilah yang pertama!</p>
+{% endfor %}
 {% endblock %}
