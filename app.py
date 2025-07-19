@@ -12,8 +12,8 @@ db = SQLAlchemy(app)
 # Model untuk Buku Tamu
 class Pesan(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  nama = db.Column(db.String(100), nullable=False)
   pesan = db.Column(db.Text, nullable=False)
+  user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
   # fungsi untuk merepresentasikan objek Pesan
   def __repr__(self):
@@ -24,6 +24,7 @@ class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(80), unique=True, nullable=False)
   password = db.Column(db.String(120), nullable=False)
+  pesan = db.relationship('Pesan', backref='user', lazy=True)
 
   def __repr__(self):
     return f'<User {self.username}>'
@@ -42,11 +43,15 @@ def login_required(f):
 @login_required
 def index():    
   if request.method == 'POST':
-    name = request.form['nama']
-    pesan = request.form['pesan']
-
-    pesan_baru = Pesan(nama=name, pesan=pesan)
+    if 'user_id' not in session:
+      flash('Anda harus login untuk mengirim pesan!', 'danger')
+      return redirect(url_for('login'))
     
+    pesan_text = request.form['pesan']
+    user_id = session['user_id']
+
+    pesan_baru = Pesan(pesan=pesan_text, user_id=user_id)
+
     try:
       db.session.add(pesan_baru)
       db.session.commit()
@@ -142,6 +147,14 @@ def inject_user():
     user = User.query.get(user_id)
     return dict(current_user=user)
   return dict(current_user=None)
+
+# Route untuk halaman profil
+@app.route('/profile/<string:username>')
+@login_required
+def profile(username):
+  user = User.query.filter_by(username=username).first_or_404()
+
+  return render_template('profil.html', user=user)
 
 if __name__ == '__main__':
   app.run(debug=True)

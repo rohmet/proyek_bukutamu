@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Profil Pengguna</h2>
+    <p>semua pesan {{ user.username }}:</p>
+    <hr>
+    {% for p in user.pesan|reverse %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ p.user.username }}</h5>
+                <p class="card-text">{{ p.pesan }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
